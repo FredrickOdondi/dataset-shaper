@@ -20,13 +20,14 @@ interface MappingResult {
 interface MappingSectionProps {
   fileName: string;
   mappingResult: MappingResult;
+  file: File;
 }
 
-export const MappingSection = ({ fileName, mappingResult }: MappingSectionProps) => {
+export const MappingSection = ({ fileName, mappingResult, file }: MappingSectionProps) => {
   const [promptColumn, setPromptColumn] = useState(mappingResult.mapping.prompt);
   const [completionColumn, setCompletionColumn] = useState(mappingResult.mapping.completion);
 
-  const handleExport = () => {
+  const handleExport = async () => {
     try {
       const jsonlLines: string[] = [];
       
@@ -39,9 +40,14 @@ export const MappingSection = ({ fileName, mappingResult }: MappingSectionProps)
         return;
       }
 
-      // We only have sample rows, so just export those for demo
-      // In production, you'd re-parse the entire file
-      mappingResult.sampleRows.forEach(row => {
+      // Parse the entire file
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      // Process all data rows (skip header)
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',').map(cell => cell.trim().replace(/^["']|["']$/g, ''));
+        
         if (row[promptIdx] && row[completionIdx]) {
           const jsonlEntry = {
             messages: [
@@ -51,7 +57,12 @@ export const MappingSection = ({ fileName, mappingResult }: MappingSectionProps)
           };
           jsonlLines.push(JSON.stringify(jsonlEntry));
         }
-      });
+      }
+
+      if (jsonlLines.length < 10) {
+        toast.error(`Training file has ${jsonlLines.length} example(s), but must have at least 10 examples`);
+        return;
+      }
 
       const blob = new Blob([jsonlLines.join('\n')], { type: 'application/jsonl' });
       const url = URL.createObjectURL(blob);
@@ -63,7 +74,7 @@ export const MappingSection = ({ fileName, mappingResult }: MappingSectionProps)
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      toast.success("JSONL file exported successfully!");
+      toast.success(`JSONL file exported successfully with ${jsonlLines.length} examples!`);
     } catch (error) {
       console.error('Export error:', error);
       toast.error("Failed to export file");
@@ -147,7 +158,7 @@ export const MappingSection = ({ fileName, mappingResult }: MappingSectionProps)
             )}
 
             <div className="pt-4">
-              <h3 className="text-sm font-medium mb-3">Preview (first 5 rows)</h3>
+              <h3 className="text-sm font-medium mb-3">Preview (first 20 rows)</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>

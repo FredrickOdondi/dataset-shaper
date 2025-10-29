@@ -37,7 +37,7 @@ serve(async (req) => {
     }
 
     const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-    const sampleRows = lines.slice(1, Math.min(11, lines.length)).map(line => {
+    const sampleRows = lines.slice(1, Math.min(21, lines.length)).map(line => {
       return line.split(',').map(cell => cell.trim().replace(/^["']|["']$/g, ''));
     });
 
@@ -120,7 +120,7 @@ Return ONLY a JSON object with this exact structure (no markdown, no explanation
       JSON.stringify({
         headers,
         rowCount: lines.length - 1,
-        sampleRows: sampleRows.slice(0, 5),
+        sampleRows: sampleRows.slice(0, 20),
         mapping
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -58,10 +58,11 @@ const Index = () => {
       <Hero />
       <Features />
       <UploadSection onFileSelect={handleFileSelect} isProcessing={isProcessing} />
-      {mappingResult && (
+      {mappingResult && selectedFile && (
         <MappingSection 
-          fileName={selectedFile?.name || 'file'}
+          fileName={selectedFile.name}
           mappingResult={mappingResult}
+          file={selectedFile}
         />
       )}
     </div>
