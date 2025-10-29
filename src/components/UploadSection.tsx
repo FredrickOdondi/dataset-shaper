@@ -7,9 +7,10 @@ import { toast } from "sonner";
 
 interface UploadSectionProps {
   onFileSelect: (file: File) => void;
+  isProcessing?: boolean;
 }
 
-export const UploadSection = ({ onFileSelect }: UploadSectionProps) => {
+export const UploadSection = ({ onFileSelect, isProcessing = false }: UploadSectionProps) => {
   const [file, setFile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -124,10 +125,11 @@ export const UploadSection = ({ onFileSelect }: UploadSectionProps) => {
               
               <Button
                 onClick={handleProcess}
+                disabled={isProcessing}
                 className="w-full bg-gradient-primary shadow-elegant hover:shadow-glow transition-all duration-300"
                 size="lg"
               >
-                Process with AI
+                {isProcessing ? "Processing..." : "Process with AI"}
               </Button>
             </div>
           )}
