@@ -35,6 +35,7 @@ export const ChatSection = ({ mappingResult, onMappingUpdate }: ChatSectionProps
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingMapping, setPendingMapping] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -83,11 +84,7 @@ export const ChatSection = ({ mappingResult, onMappingUpdate }: ChatSectionProps
       }]);
 
       if (result.updatedMapping) {
-        onMappingUpdate({
-          ...mappingResult,
-          mapping: result.updatedMapping
-        });
-        toast.success("Mapping updated based on your input!");
+        setPendingMapping(result.updatedMapping);
       }
     } catch (error) {
       console.error('Chat error:', error);
@@ -105,6 +102,17 @@ export const ChatSection = ({ mappingResult, onMappingUpdate }: ChatSectionProps
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleApplyMapping = () => {
+    if (pendingMapping) {
+      onMappingUpdate({
+        ...mappingResult,
+        mapping: pendingMapping
+      });
+      setPendingMapping(null);
+      toast.success("Mapping changes applied!");
     }
   };
 
@@ -166,6 +174,20 @@ export const ChatSection = ({ mappingResult, onMappingUpdate }: ChatSectionProps
               )}
               <div ref={messagesEndRef} />
             </div>
+
+            {pendingMapping && (
+              <div className="mb-4 p-4 bg-primary/10 border border-primary rounded-lg">
+                <p className="text-sm font-medium mb-2">AI suggested mapping changes:</p>
+                <ul className="text-sm space-y-1 mb-3">
+                  <li>Prompt: {pendingMapping.prompt}</li>
+                  <li>Completion: {pendingMapping.completion}</li>
+                  <li>Ignored: {pendingMapping.ignored_columns.join(', ')}</li>
+                </ul>
+                <Button onClick={handleApplyMapping} className="w-full">
+                  Apply Changes
+                </Button>
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Input

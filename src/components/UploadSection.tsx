@@ -17,6 +17,7 @@ interface DatabaseConnection {
   password?: string;
   supabaseUrl?: string;
   supabaseKey?: string;
+  tableName?: string;
 }
 
 interface UploadSectionProps {
@@ -41,7 +42,8 @@ export const UploadSection = ({ onFileSelect, onDatabaseConnect, isProcessing = 
   // Supabase connection state
   const [supabaseConnection, setSupabaseConnection] = useState({
     supabaseUrl: '',
-    supabaseKey: ''
+    supabaseKey: '',
+    tableName: ''
   });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -106,8 +108,8 @@ export const UploadSection = ({ onFileSelect, onDatabaseConnect, isProcessing = 
   
   const handleSupabaseConnect = () => {
     // Validate Supabase connection
-    if (!supabaseConnection.supabaseUrl || !supabaseConnection.supabaseKey) {
-      toast.error("Please provide both Supabase URL and API Key");
+    if (!supabaseConnection.supabaseUrl || !supabaseConnection.supabaseKey || !supabaseConnection.tableName) {
+      toast.error("Please provide Supabase URL, API Key, and Table Name");
       return;
     }
     
@@ -320,6 +322,20 @@ export const UploadSection = ({ onFileSelect, onDatabaseConnect, isProcessing = 
                   />
                   <p className="text-xs text-muted-foreground">
                     Use anon key for public access or service key for admin access
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="supabase-table">Table Name *</Label>
+                  <Input
+                    id="supabase-table"
+                    placeholder="my_table"
+                    value={supabaseConnection.tableName}
+                    onChange={(e) => setSupabaseConnection({ ...supabaseConnection, tableName: e.target.value })}
+                    disabled={isProcessing}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    The name of the table containing your fine-tuning data
                   </p>
                 </div>
               </div>

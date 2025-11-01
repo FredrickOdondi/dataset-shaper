@@ -15,30 +15,24 @@ serve(async (req) => {
   try {
     const connection = await req.json();
     
-    console.log('Database connection request:', connection.type);
+    console.log('Database connection request:', connection.type, 'table:', connection.tableName);
 
     let headers: string[] = [];
     let sampleRows: string[][] = [];
     let rowCount = 0;
 
     if (connection.type === 'supabase') {
+      if (!connection.tableName) {
+        throw new Error('Table name is required for Supabase connection');
+      }
+
       // Connect to Supabase
       const supabase = createClient(
         connection.supabaseUrl,
         connection.supabaseKey
       );
 
-      // Get first table (you can modify this to let user select table)
-      const { data: tables, error: tablesError } = await supabase
-        .from('information_schema.tables')
-        .select('table_name')
-        .eq('table_schema', 'public')
-        .limit(1);
-
-      if (tablesError) throw new Error(`Failed to fetch tables: ${tablesError.message}`);
-      if (!tables || tables.length === 0) throw new Error('No tables found in database');
-
-      const tableName = tables[0].table_name;
+      const tableName = connection.tableName;
       console.log('Using table:', tableName);
 
       // Get table data
@@ -47,8 +41,8 @@ serve(async (req) => {
         .select('*', { count: 'exact' })
         .limit(20);
 
-      if (error) throw new Error(`Failed to fetch data: ${error.message}`);
-      if (!data || data.length === 0) throw new Error('Table is empty');
+      if (error) throw new Error(`Failed to fetch data from table "${tableName}": ${error.message}`);
+      if (!data || data.length === 0) throw new Error(`Table "${tableName}" is empty`);
 
       headers = Object.keys(data[0]);
       sampleRows = data.map(row => headers.map(h => String(row[h] || '')));
