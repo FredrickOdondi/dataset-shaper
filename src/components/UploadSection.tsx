@@ -311,7 +311,7 @@ export const UploadSection = ({ onFileSelect, onDatabaseConnect, isProcessing = 
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="supabase-key">Supabase Anon/Service Key *</Label>
+                  <Label htmlFor="supabase-key">Supabase Service Role Key *</Label>
                   <Input
                     id="supabase-key"
                     type="password"
@@ -321,7 +321,7 @@ export const UploadSection = ({ onFileSelect, onDatabaseConnect, isProcessing = 
                     disabled={isProcessing}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Use anon key for public access or service key for admin access
+                    Use your SERVICE ROLE key (not anon key) to bypass RLS and access all data
                   </p>
                 </div>
                 

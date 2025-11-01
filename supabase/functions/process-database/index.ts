@@ -42,7 +42,15 @@ serve(async (req) => {
         .limit(20);
 
       if (error) throw new Error(`Failed to fetch data from table "${tableName}": ${error.message}`);
-      if (!data || data.length === 0) throw new Error(`Table "${tableName}" is empty`);
+      
+      if (!data || data.length === 0) {
+        throw new Error(
+          `No accessible data found in table "${tableName}". This could mean:\n` +
+          `1. The table is empty, OR\n` +
+          `2. Row Level Security (RLS) is enabled and blocking access.\n\n` +
+          `Solution: Use your Supabase SERVICE ROLE key instead of the anon key to bypass RLS restrictions for data extraction.`
+        );
+      }
 
       headers = Object.keys(data[0]);
       sampleRows = data.map(row => headers.map(h => String(row[h] || '')));
