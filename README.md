@@ -1,73 +1,33 @@
+# Monk: AI-Powered LLM Data Preparation
 
+**Turn raw data into training-ready datasets in one click.** Monk detects what each column means and maps it into the format you need for LLM fine-tuning.
 
-## Project info
+**Live:** https://dataset-shaper.vercel.app
 
-**URL**: https://lovable.dev/projects/e43b8170-f916-4cd0-9fe1-3c45714c2157
+## Features
 
-## How can I edit this code?
+- **Upload** CSV and spreadsheet files, or connect a database
+- **AI column detection:** figures out which fields are prompts, responses, labels or metadata
+- **Chat-based mapping:** refine the schema mapping by talking to the assistant
+- **Export** clean, fine-tuning-ready datasets
 
-There are several ways of editing your application.
+## Architecture
 
-**Use Lovable**
+React frontend plus three Supabase Edge Functions:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e43b8170-f916-4cd0-9fe1-3c45714c2157) and start prompting.
+| Function | Role |
+|---|---|
+| `process-file` | Parses uploaded files |
+| `process-database` | Pulls and shapes data from a connected database |
+| `chat-mapping` | LLM-driven column mapping via chat |
 
-Changes made via Lovable will be committed automatically to this repo.
+## Stack
 
-**Use your preferred IDE**
+React · TypeScript · Vite · Tailwind CSS · shadcn/ui · Supabase (Edge Functions) · PapaParse
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Run locally
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/e43b8170-f916-4cd0-9fe1-3c45714c2157) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
